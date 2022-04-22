@@ -1,0 +1,31 @@
+{
+  "name": "Noplayit YouTube Chrome extension",
+  "description": "An extension for Chrome browser that disables autoplay option on YouTube website.",
+  "author": "Bojana Pjevalica",
+  "version": "1.0",
+  "manifest_version": 3,
+
+  "permissions": ["storage", "management","webNavigation","tabs"],
+
+  "icons": {
+    "16": "logo16.png",
+    "128": "logo128.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  
+  "action": {
+    "default_popup": "popup\\popup.html",
+    "default_title": "No autoplay it YouTube"
+  },
+
+
+  "background": {
+    "service_worker": "background.js"
+  }
+}

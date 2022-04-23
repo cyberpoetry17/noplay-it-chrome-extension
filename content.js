@@ -1,13 +1,51 @@
 const buttonStatus = "autoplayButtonStatus";
-const query = "button[title^='Autoplay']";
+const nodeName = "BUTTON";
+const query = "autoplay";
 const ariaChecked = "aria-checked";
+let button = null;
 
-const observer = new MutationObserver((mutations) => {
+const documentObserver = new MutationObserver((mutations) => {
+  try {
+    mutations.forEach((mutation) => {
+      if (
+        mutation.target.nodeName === nodeName &&
+        mutation.target.title.toLowerCase().includes(query)
+      ) {
+        button = mutation.target;
+        throw BreakException;
+      }
+    });
+  } catch (e) {
+    documentObserver.disconnect();
+    prepareAutoplayButton();
+    changeAutoplayStatus(button);
+  }
+});
+
+const buttonObserver = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
     if (mutation.attributeName !== ariaChecked)
       changeAutoplayStatus(mutation.target);
   });
 });
+
+const prepareAutoplayButton = () => {
+  if (button) {
+    addOnClickListener(button);
+    setObserver(button, buttonObserver);
+  }
+};
+
+const setObserver = (element, observer) => {
+  observer.observe(element, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+  });
+};
+
+const addOnClickListener = (element) =>
+  element.addEventListener("click", setAutoplayStatusManually);
 
 const changeAutoplayStatus = (target) =>
   chrome.storage.local
@@ -21,34 +59,11 @@ const setAutoplayStatus = (button, status) => {
       .setAttribute(ariaChecked, status);
 };
 
-const getAutoplayButton = async () => {
-  let button = await document.querySelector(query);
-
-  if (button) addOnClickListener(button);
-
-  chrome.storage.local
-    .get([buttonStatus])
-    .then((result) => changeAutoplayStatus(button, result.autoplayButton));
-
-  setObserver(button);
-};
-
-const setObserver = (element) => {
-  observer.observe(element, {
-    childList: true,
-    subtree: true,
-    attributes: true,
+const setAutoplayStatusManually = () => {
+  buttonObserver.disconnect();
+  chrome.storage.local.set({
+    autoplayButtonStatus: !chrome.storage.local.get([buttonStatus]),
   });
 };
 
-const addOnClickListener = (element) => element.addEventListener("click", setAutoplayStatusManually);
-
-const setAutoplayStatusManually = () => {
-  let status = chrome.storage.local.get([buttonStatus]);
-  chrome.storage.local.set({ autoplayButtonStatus: !status });
-
-  observer.disconnect();
-};
-
-//pozivanje funkcija je ovde i ovo moram smisliti bolje
-setTimeout(getAutoplayButton, 6000);
+setObserver(document, documentObserver);

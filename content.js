@@ -66,4 +66,18 @@ const setAutoplayStatusManually = () => {
   });
 };
 
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+    if (request.message === 'updated') {
+      setObserver(document, documentObserver);
+      sendResponse("updated")
+    }
+});
+
 setObserver(document, documentObserver);
+
+    
+
+ 
+
+

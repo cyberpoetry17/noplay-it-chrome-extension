@@ -5,7 +5,7 @@
   "version": "1.0",
   "manifest_version": 3,
 
-  "permissions": ["storage", "management","webNavigation","tabs"],
+  "permissions": ["storage","webNavigation","tabs"],
 
   "icons": {
     "16": "logo16.png",
@@ -14,7 +14,7 @@
 
   "content_scripts": [
     {
-      "matches": ["*://*.youtube.com/*"],
+      "matches": ["*://*.youtube.com/watch?*"],
       "js": ["content.js"]
     }
   ],

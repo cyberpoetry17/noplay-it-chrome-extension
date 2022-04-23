@@ -32,15 +32,6 @@ const sendMessage = (status, message) => {
   );
 };
 
-const sendMessageToContentScript = async () =>{
-  let queryOptions = { active: true, currentWindow: true };
-  let tab = await chrome.tabs.query(queryOptions);
-
-  chrome.tabs.sendMessage(tab[0].id, function(response) {
-      console.log(response.status);
-  });
-}
-
 chrome.storage.local.get(["autoplayButtonStatus"], (result) => {
   if (chrome.runtime.lastError) {
     console.log("Error getting");

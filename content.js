@@ -1,17 +1,29 @@
-const buttonStatus = "autoplayButtonStatus";
-const nodeName = "button";
-const query = "autoplay";
-const ariaChecked = "aria-checked";
 let button = null;
 let isAutoplayActive = null;
-const autoplayStatus = null;
+const autoplayStatus = chrome.storage.local.get(["autoplayButtonStatus"]);
+
+const Responses = {
+  UPDATED: 'updated',
+  REDIRECTED: 'redirected',
+};
+
+const RequestMessages ={
+ UPDATED:"updated",
+ CONTENT_STATUS:"content-status"
+}
+
+const QueryHelpers ={
+  NODE_NAME:"button",
+  ARIA_CHECKED:"aria-checked",
+  TITLE_QUERY:"autoplay"
+ }
 
 const documentObserver = new MutationObserver((mutations) => {
   try {
     mutations.forEach((mutation) => {
       if (
-        mutation.target.nodeName.toLowerCase() === nodeName &&
-        mutation.target.title.toLowerCase().includes(query)
+        mutation.target.nodeName.toLowerCase() === QueryHelpers.NODE_NAME &&
+        mutation.target.title.toLowerCase().includes(QueryHelpers.TITLE_QUERY)
       ) {
         button = mutation.target;
         throw BreakException;
@@ -28,7 +40,7 @@ const documentObserver = new MutationObserver((mutations) => {
 
 const buttonObserver = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
-    if (mutation.attributeName !== ariaChecked)
+    if (mutation.attributeName !== QueryHelpers.ARIA_CHECKED)
       handleAutoplayStatusChange(mutation.target);
   });
 });
@@ -54,32 +66,30 @@ const addOnClickListener = (element) =>
 const cleanup = () => {
   buttonObserver.disconnect();
 
-  // let status = chrome.storage.local.get([buttonStatus]);
-  // chrome.storage.local.set({
-  //   autoplayButtonStatus: !status,
-  // });
+  chrome.storage.local.set({
+    autoplayButtonStatus: !autoplayStatus,
+  });
 };
 
 const handleAutoplayStatusChange = (target) =>
-  chrome.storage.local
-    .get([buttonStatus])
-    .then((result) => setAutoplayStatus(target, result.autoplayButtonStatus));
+  setAutoplayStatus(target,autoplayStatus);
 
 const setAutoplayStatus = (button, status) => {
   button
-    .querySelector("[" + ariaChecked + "]")
-    .setAttribute(ariaChecked, status);
+    .querySelector("[" + QueryHelpers.ARIA_CHECKED + "]")
+    .setAttribute(QueryHelpers.ARIA_CHECKED, status);
 };
 
 chrome.runtime.onMessage.addListener((request,sender,sendResponse) => {
-  if (request.message === "updated" && isAutoplayActive) {
+  if (request.message === RequestMessages.UPDATED && isAutoplayActive) {
     setObserver(document, documentObserver);
-    sendResponse("updated");
+    sendResponse(Responses.UPDATED);
   }
-  if (request.message === "content-status") {
+
+  if (request.message === RequestMessages.CONTENT_STATUS) {
     isAutoplayActive = request.isAutoplayActive;
     window.location.reload();
-    sendResponse("ok");
+    sendResponse(Responses.REDIRECTED);
   }
 });
 

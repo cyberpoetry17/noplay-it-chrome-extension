@@ -3,9 +3,14 @@ let autoplayCheckbox = null;
 let githubButton = null;
 const githubUrl = "https://github.com/cyberpoetry17"
 
+const NodeId ={
+ AUTOPLAY_CHECKBOX:"autoplay-checkbox",
+ GITHUB_BUTTON:"github-button"
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-  autoplayCheckbox = document.getElementById("autoplay-checkbox");
-  githubButton = document.getElementById("github-button");
+  autoplayCheckbox = document.getElementById(NodeId.AUTOPLAY_CHECKBOX);
+  githubButton = document.getElementById(NodeId.GITHUB_BUTTON);
 
   getIsAutoplayActiveStatus();
   addAutoplayCheckboxListener();

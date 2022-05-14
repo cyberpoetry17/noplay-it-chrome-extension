@@ -6,16 +6,13 @@
   font-size: larger;
   color: dimgray;
 }
-.github-button{
-  border-radius: 50px;
-  border: none;
-  background-image: linear-gradient(
-    to right,
-    hsla(9, 100%, 64%, 0.5),
-    rgb(146, 255, 146)
-  );
 
+.github-button{
+  cursor: pointer;
+  border:none;
+  background-color: transparent;
 }
+
 .image-div{
   width: 60px;
   height: 32px;

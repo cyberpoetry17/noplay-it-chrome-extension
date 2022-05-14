@@ -2,27 +2,31 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="popup.css" />
+    <link rel ="stylesheet" type="text/css" href="switch.css">
     <script src="popup.js"></script>
   </head>
-  <body>
-    <div class="parent margin">
+  <body  >
+    <div>
       <img src="../logo128.png" alt="Noplayit" />
       <hr />
-      <div>
-        <label class="element-margin font-type text-properties"
-          >Autoplay:</label
-        >
-        <button
-          id="disableAutoplayButton"
-          class="enabledAutoplayButton element-margin"
-        ></button>
+      <div class="container">
+        <label class="text-properties">Autoplay</label>
+        <label class="switch">
+          <input id="autoplay-checkbox" type="checkbox">
+          <span class="switch-slider"></span>
+        </label>
       </div>
       <hr />
-      <div>
-        <label class="element-margin font-type text-properties"
-          >Playback:</label
-        >
-        <button class="element-margin"></button>
+      <div class="container">
+        <label class="text-properties">Playback</label>
+        <label class="switch">
+          <input id="playback-checkbox" type="checkbox">
+          <span class="switch-slider"></span>
+        </label>
+      </div>
+      <hr />
+      <div class="image-div" >
+        <button class="github-button" id="github-button"><img src="../images/github_logo.png" alt="github"/></button>
       </div>
     </div>
   </body>

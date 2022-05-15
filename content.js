@@ -1,22 +1,23 @@
 let button = null;
 let isAutoplayActive = null;
-const autoplayStatus = chrome.storage.local.get(["autoplayButtonStatus"]);
+let autoplayStatus = false;
+let isButtonClicked = false;
 
 const Responses = {
-  UPDATED: 'updated',
-  REDIRECTED: 'redirected',
+  UPDATED: "updated",
+  REDIRECTED: "redirected",
 };
 
-const RequestMessages ={
- UPDATED:"updated",
- CONTENT_STATUS:"content-status"
-}
+const RequestMessages = {
+  UPDATED: "updated",
+  CONTENT_STATUS: "content-status",
+};
 
-const QueryHelpers ={
-  NODE_NAME:"button",
-  ARIA_CHECKED:"aria-checked",
-  TITLE_QUERY:"autoplay"
- }
+const QueryHelpers = {
+  NODE_NAME: "button",
+  ARIA_CHECKED: "aria-checked",
+  TITLE_QUERY: "autoplay",
+};
 
 const documentObserver = new MutationObserver((mutations) => {
   try {
@@ -33,7 +34,7 @@ const documentObserver = new MutationObserver((mutations) => {
     documentObserver.disconnect();
     if (isAutoplayActive) {
       prepareAutoplayButton();
-      handleAutoplayStatusChange(button);
+      handleAutoplayStatusChange();
     }
   }
 });
@@ -42,12 +43,16 @@ const buttonObserver = new MutationObserver((mutations) => {
   mutations.forEach((mutation) => {
     if (mutation.attributeName !== QueryHelpers.ARIA_CHECKED)
       handleAutoplayStatusChange(mutation.target);
+    if (isButtonClicked) {
+      setAutoplayStatus(button, true);
+      buttonObserver.disconnect();
+    }
   });
 });
 
 const prepareAutoplayButton = () => {
   if (button) {
-    addOnClickListener(button);
+    addOnClickListener();
     setObserver(button, buttonObserver);
   }
 };
@@ -60,19 +65,13 @@ const setObserver = (element, observer) => {
   });
 };
 
-const addOnClickListener = (element) =>
-  element.addEventListener("click", cleanup);
+const addOnClickListener = () =>
+  button.addEventListener("click", handleButtonClick);
 
-const cleanup = () => {
-  buttonObserver.disconnect();
+const handleButtonClick = () => (isButtonClicked = true);
 
-  chrome.storage.local.set({
-    autoplayButtonStatus: !autoplayStatus,
-  });
-};
-
-const handleAutoplayStatusChange = (target) =>
-  setAutoplayStatus(target,autoplayStatus);
+const handleAutoplayStatusChange = () =>
+  setAutoplayStatus(button, autoplayStatus);
 
 const setAutoplayStatus = (button, status) => {
   button
@@ -80,9 +79,9 @@ const setAutoplayStatus = (button, status) => {
     .setAttribute(QueryHelpers.ARIA_CHECKED, status);
 };
 
-chrome.runtime.onMessage.addListener((request,sender,sendResponse) => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.message === RequestMessages.UPDATED && isAutoplayActive) {
-    setObserver(document, documentObserver);
+    cleanup();
     sendResponse(Responses.UPDATED);
   }
 
@@ -93,8 +92,24 @@ chrome.runtime.onMessage.addListener((request,sender,sendResponse) => {
   }
 });
 
-chrome.storage.local
-  .get(["isAutoplayActive"])
-  .then((result) => (isAutoplayActive = result.isAutoplayActive));
+const cleanup = () => {
+  setObserver(document, documentObserver);
+  setAutoplayButtonStatus();
+  isButtonClicked = false;
+};
 
+const setAutoplayButtonStatus = () => {
+  chrome.storage.local.get(["autoplayButtonStatus"]).then((response) => {
+    autoplayStatus = response.autoplayButtonStatus;
+  });
+};
+
+const setIsAutoplayActive = () => {
+  chrome.storage.local
+    .get(["isAutoplayActive"])
+    .then((result) => (isAutoplayActive = result.isAutoplayActive));
+};
+
+setAutoplayButtonStatus();
+setIsAutoplayActive();
 setObserver(document, documentObserver);

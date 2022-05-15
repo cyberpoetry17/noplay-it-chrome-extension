@@ -1,12 +1,12 @@
 let isAutoplayActive;
 let autoplayCheckbox = null;
 let githubButton = null;
-const githubUrl = "https://github.com/cyberpoetry17"
+const githubUrl = "https://github.com/cyberpoetry17";
 
-const NodeId ={
- AUTOPLAY_CHECKBOX:"autoplay-checkbox",
- GITHUB_BUTTON:"github-button"
-}
+const NodeId = {
+  AUTOPLAY_CHECKBOX: "autoplay-checkbox",
+  GITHUB_BUTTON: "github-button",
+};
 
 document.addEventListener("DOMContentLoaded", () => {
   autoplayCheckbox = document.getElementById(NodeId.AUTOPLAY_CHECKBOX);
@@ -26,13 +26,13 @@ const getIsAutoplayActiveStatus = () => {
 
 const addAutoplayCheckboxListener = () => {
   autoplayCheckbox.addEventListener("click", () => {
-    sendMessage(!isAutoplayActive, "setIsAutoplayActive");
+    sendMessage(!isAutoplayActive, "set-is-autoplay-active");
   });
 };
 
 const addFooterListener = () => {
   githubButton.addEventListener("click", () => {
-    chrome.tabs.create({'url': githubUrl, 'selected': true});
+    chrome.tabs.create({ url: githubUrl, selected: true });
   });
 };
 

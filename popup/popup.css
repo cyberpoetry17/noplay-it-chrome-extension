@@ -11,15 +11,21 @@
   cursor: pointer;
   border:none;
   background-color: transparent;
+  margin-top: 10px;
 }
 
 .image-div{
-  width: 60px;
-  height: 32px;
+  width: 25px;
+  height: 25px;
+}
+
+.outer-container{
+  display: flex;
+  flex-direction: column;
 }
 
 .container {
-  height: 60px;
+  height: 85px;
   display: flex;
   flex-wrap: wrap;
   flex-direction: column;
@@ -34,6 +40,6 @@ body {
     hsla(9, 100%, 64%, 0.5),
     rgb(146, 255, 146)
   );
-  height: 300px;
+  height: 275px;
   width: 150px;
 }

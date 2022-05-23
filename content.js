@@ -3,7 +3,6 @@ let isAutoplayActive = null;
 let isAutoplayStatusSet = false;
 let autoplayStatus = false;
 
-
 const Responses = {
   UPDATED: "updated",
   REDIRECTED: "redirected",
@@ -20,47 +19,23 @@ const QueryHelpers = {
   TITLE_QUERY: "autoplay",
 };
 
-// const documentObserver = new MutationObserver((mutations) => {
-//   try {
-//     mutations.forEach((mutation) => {
-//       if (
-//         mutation.target.nodeName.toLowerCase() === QueryHelpers.NODE_NAME &&
-//         mutation.target.title.toLowerCase().includes(QueryHelpers.TITLE_QUERY)
-//       ) {
-//         console.log(mutation)
-//         button = mutation.target;
-//         documentObserver.disconnect();
-//         throw BreakException;
-//       }
-//     });
-//   } catch (e) {
-//     if (isAutoplayActive) {
-       
-//          handleAutoplayStatusChange()
-//     }
-    
-//   }
-// });
+const documentObserver = new MutationObserver((mutations, observer) => {
+  for (let i = 0; i < mutations.length; i++) {
+    if (
+     isNodeNameEqual(mutations[i].target.nodeName) &&
+     hasTitle( mutations[i].target.title.toLowerCase())
+    ) {
+      if (isAutoplayActive && !isAutoplayStatusSet) handleElement(mutations[i].target);
 
-const documentObserver = new MutationObserver((mutations,observer) => {
-  for (let i = 0; i < mutations.length; i++){
-  
-  if (
-    mutations[i].target.nodeName.toLowerCase() === QueryHelpers.NODE_NAME &&
-    mutations[i].target.title.toLowerCase().includes(QueryHelpers.TITLE_QUERY)
-  ) {
-    if(isAutoplayActive){
-      button = mutations[i].target;
-      setDefaultAutoplayStatus();
-    if(autoplayStatus === "true"){
-      console.log("cmon")
-    handleAutoplayStatusChange()}
-    console.log(button)}
-    observer.disconnect();
-   break;
+      observer.disconnect();
+      break;
+    }
   }
- }  
 });
+
+const isNodeNameEqual = (target) => target.toLowerCase() === QueryHelpers.NODE_NAME
+
+const hasTitle = (target) => target.includes(QueryHelpers.TITLE_QUERY)
 
 const setObserver = (element, observer) => {
   observer.observe(element, {
@@ -70,30 +45,36 @@ const setObserver = (element, observer) => {
   });
 };
 
-const setDefaultAutoplayStatus = () =>{
-  if(!isAutoplayStatusSet){
-    console.log('*')
-    console.log(typeof button.querySelector("[" + QueryHelpers.ARIA_CHECKED + "]").getAttribute("aria-checked"))
-    autoplayStatus =  button.querySelector("[" + QueryHelpers.ARIA_CHECKED + "]").getAttribute("aria-checked");
-    isAutoplayStatusSet = true;
-  }
-}
+const handleElement = (target) => {
+  button = target;
+  setDefaultAutoplayStatus();
 
-const handleAutoplayStatusChange = () =>{
-  console.log("change")
-  button.click();}
+  if (isAutoplayStatus()) handleAutoplayStatusChange();
+};
+
+const setDefaultAutoplayStatus = () => {
+  autoplayStatus = button
+  .querySelector("[" + QueryHelpers.ARIA_CHECKED + "]")
+  .getAttribute("aria-checked");
+
+  isAutoplayStatusSet = true;
+};
+
+const isAutoplayStatus = () => autoplayStatus === "true" ? true : false
+
+const handleAutoplayStatusChange = () => button.click();
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.message === RequestMessages.UPDATED && isAutoplayActive) {
-    cleanup();
     sendResponse(Responses.UPDATED);
+    cleanup();
   }
 
   if (request.message === RequestMessages.CONTENT_STATUS) {
     isAutoplayActive = request.isAutoplayActive;
     resetButton();
-    window.location.reload();
     sendResponse(Responses.REDIRECTED);
+    window.location.reload();
   }
 });
 
@@ -102,11 +83,9 @@ const cleanup = () => {
   setObserver(document, documentObserver);
 };
 
-const resetButton = () =>{
-  if(!isAutoplayActive && autoplayStatus ==="false"){
-    console.log("is it reseting???")
-   button.click();}
-}
+const resetButton = () => {
+  if (!isAutoplayActive && autoplayStatus === "false") button.click();
+};
 
 const setIsAutoplayActive = () => {
   chrome.storage.local

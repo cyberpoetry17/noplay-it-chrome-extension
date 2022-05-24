@@ -22,10 +22,11 @@ const QueryHelpers = {
 const documentObserver = new MutationObserver((mutations, observer) => {
   for (let i = 0; i < mutations.length; i++) {
     if (
-     isNodeNameEqual(mutations[i].target.nodeName) &&
-     hasTitle( mutations[i].target.title.toLowerCase())
+      isNodeNameEqual(mutations[i].target.nodeName) &&
+      hasTitle(mutations[i].target.title.toLowerCase())
     ) {
-      if (isAutoplayActive && !isAutoplayStatusSet) handleElement(mutations[i].target);
+      if (isAutoplayActive && !isAutoplayStatusSet)
+        handleElement(mutations[i].target);
 
       observer.disconnect();
       break;
@@ -33,9 +34,10 @@ const documentObserver = new MutationObserver((mutations, observer) => {
   }
 });
 
-const isNodeNameEqual = (target) => target.toLowerCase() === QueryHelpers.NODE_NAME
+const isNodeNameEqual = (target) =>
+  target.toLowerCase() === QueryHelpers.NODE_NAME;
 
-const hasTitle = (target) => target.includes(QueryHelpers.TITLE_QUERY)
+const hasTitle = (target) => target.includes(QueryHelpers.TITLE_QUERY);
 
 const setObserver = (element, observer) => {
   observer.observe(element, {
@@ -54,20 +56,20 @@ const handleElement = (target) => {
 
 const setDefaultAutoplayStatus = () => {
   autoplayStatus = button
-  .querySelector("[" + QueryHelpers.ARIA_CHECKED + "]")
-  .getAttribute("aria-checked");
+    .querySelector("[" + QueryHelpers.ARIA_CHECKED + "]")
+    .getAttribute("aria-checked");
 
   isAutoplayStatusSet = true;
 };
 
-const isAutoplayStatus = () => autoplayStatus === "true" ? true : false
+const isAutoplayStatus = () => (autoplayStatus === "true" ? true : false);
 
 const handleAutoplayStatusChange = () => button.click();
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.message === RequestMessages.UPDATED && isAutoplayActive) {
+  if (request.message === RequestMessages.UPDATED) {
     sendResponse(Responses.UPDATED);
-    cleanup();
+    if (isAutoplayActive) cleanup();
   }
 
   if (request.message === RequestMessages.CONTENT_STATUS) {

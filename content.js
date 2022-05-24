@@ -64,7 +64,10 @@ const setDefaultAutoplayStatus = () => {
 
 const isAutoplayStatus = () => (autoplayStatus === "true" ? true : false);
 
-const handleAutoplayStatusChange = () => button.click();
+const handleAutoplayStatusChange = () => {
+  button.click();
+  autoplayStatus = "false";
+};
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.message === RequestMessages.UPDATED) {
@@ -74,6 +77,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
   if (request.message === RequestMessages.CONTENT_STATUS) {
     isAutoplayActive = request.isAutoplayActive;
+
     resetButton();
     sendResponse(Responses.REDIRECTED);
     window.location.reload();
@@ -86,7 +90,7 @@ const cleanup = () => {
 };
 
 const resetButton = () => {
-  if (!isAutoplayActive && autoplayStatus === "false") button.click();
+  if (!isAutoplayActive && !isAutoplayStatus()) button.click();
 };
 
 const setIsAutoplayActive = () => {

@@ -64,10 +64,9 @@ const setDefaultAutoplayStatus = () => {
 
 const isAutoplayStatus = () => (autoplayStatus === "true" ? true : false);
 
-const handleAutoplayStatusChange = () => {
+const handleAutoplayStatusChange = () => 
   button.click();
-  autoplayStatus = "false";
-};
+
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.message === RequestMessages.UPDATED) {
@@ -90,7 +89,7 @@ const cleanup = () => {
 };
 
 const resetButton = () => {
-  if (!isAutoplayActive && !isAutoplayStatus()) button.click();
+  if (!isAutoplayActive && isAutoplayStatus()) button.click();
 };
 
 const setIsAutoplayActive = () => {

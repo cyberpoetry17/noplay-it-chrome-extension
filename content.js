@@ -132,3 +132,5 @@ const setIsAutoplayActive = () => {
 };
 
 setIsAutoplayActive();
+setObserver(document, documentObserver);
+

@@ -103,6 +103,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           .getAttribute("aria-checked");
 
         handleElement();
+        sendResponse(Responses.UPDATED);
       }
     }
 

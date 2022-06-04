@@ -60,7 +60,7 @@ const sendMessageToTabs = (message, status) => {
 const isUrlValid = (url, urlPattern) => url.match(urlPattern);
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.url && isUrlValid(changeInfo.url, urlPattern)) {
+  if (changeInfo.url && (isUrlValid(changeInfo.url, urlPattern) || isUrlValid(changeInfo.url, shortUrlPattern))) {
     chrome.tabs.sendMessage(tabId, {
       message: Messages.UPDATED,
       url: changeInfo.url,

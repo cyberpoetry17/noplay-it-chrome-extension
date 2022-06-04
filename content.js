@@ -2,6 +2,7 @@ let button = null;
 let isAutoplayActive = null;
 let isAutoplayStatusSet = false;
 let autoplayStatus = false;
+let btnClickedByUser = false;
 
 let currentURL = "";
 
@@ -27,12 +28,16 @@ const documentObserver = new MutationObserver((mutations, observer) => {
       isNodeNameEqual(mutations[i].target.nodeName) &&
       hasTitle(mutations[i].target.title.toLowerCase())
     ) {
-      if (!isAutoplayStatusSet) {
-        setDefaultAutoplayStatus(mutations[i].target);
+      if (button !== null)
+      {
+        observer.disconnect;
+        break;
       }
 
+      setDefaultAutoplayStatus(mutations[i].target);
+
       if (isAutoplayActive) {
-        handleElement(mutations[i].target);
+        handleElement();
       }
       observer.disconnect();
       break;
@@ -53,12 +58,13 @@ const setObserver = (element, observer) => {
   });
 };
 
-const handleElement = (target) => {
+const handleElement = () => {
   if (isAutoplayStatus()) handleAutoplayStatusChange();
 };
 
 const setDefaultAutoplayStatus = (target) => {
   button = target;
+  button.addEventListener("click", userButtonClick)
   autoplayStatus = button
     .querySelector("[" + QueryHelpers.ARIA_CHECKED + "]")
     .getAttribute("aria-checked");
@@ -66,19 +72,39 @@ const setDefaultAutoplayStatus = (target) => {
   isAutoplayStatusSet = true;
 };
 
+const userButtonClick = () => 
+  btnClickedByUser = true
+
+
+
 const isAutoplayStatus = () => (autoplayStatus === "true" ? true : false);
 
-const handleAutoplayStatusChange = () => button.click();
+const handleAutoplayStatusChange = () => {
+  button.click();
+  btnClickedByUser = false;
+}
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (
     request.message === RequestMessages.UPDATED &&
-    (currentURL == "" || !request.url.startsWith(currentURL))
+    (currentURL === "" || !request.url.startsWith(currentURL))
   ) {
     currentURL = request.url;
     sendResponse(Responses.UPDATED);
     if (isAutoplayActive) cleanup();
   }
+
+  if (
+    request.message === RequestMessages.UPDATED && (request.url.startsWith(currentURL) || request.url === currentURL))
+    {
+      if (isAutoplayActive && !btnClickedByUser && button !== null) {
+        autoplayStatus = button
+          .querySelector("[" + QueryHelpers.ARIA_CHECKED + "]")
+          .getAttribute("aria-checked");
+
+        handleElement();
+      }
+    }
 
   if (request.message === RequestMessages.CONTENT_STATUS) {
     isAutoplayActive = request.isAutoplayActive;
@@ -91,6 +117,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 const cleanup = () => {
   isAutoplayStatusSet = false;
+  button = null;
   setObserver(document, documentObserver);
 };
 
@@ -105,4 +132,3 @@ const setIsAutoplayActive = () => {
 };
 
 setIsAutoplayActive();
-setObserver(document, documentObserver);

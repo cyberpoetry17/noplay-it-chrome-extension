@@ -3,6 +3,8 @@ let isAutoplayActive = null;
 let isAutoplayStatusSet = false;
 let autoplayStatus = false;
 
+let currentURL = "";
+
 const Responses = {
   UPDATED: "updated",
   REDIRECTED: "redirected",
@@ -25,14 +27,13 @@ const documentObserver = new MutationObserver((mutations, observer) => {
       isNodeNameEqual(mutations[i].target.nodeName) &&
       hasTitle(mutations[i].target.title.toLowerCase())
     ) {
+      if (!isAutoplayStatusSet) {
+        setDefaultAutoplayStatus(mutations[i].target);
+      }
 
-      if(!isAutoplayStatusSet){
-        setDefaultAutoplayStatus(mutations[i].target);}
-  
-      if (isAutoplayActive){
+      if (isAutoplayActive) {
         handleElement(mutations[i].target);
-     }
-
+      }
       observer.disconnect();
       break;
     }
@@ -53,13 +54,11 @@ const setObserver = (element, observer) => {
 };
 
 const handleElement = (target) => {
-  
-
   if (isAutoplayStatus()) handleAutoplayStatusChange();
 };
 
 const setDefaultAutoplayStatus = (target) => {
-  button = target; 
+  button = target;
   autoplayStatus = button
     .querySelector("[" + QueryHelpers.ARIA_CHECKED + "]")
     .getAttribute("aria-checked");
@@ -71,19 +70,19 @@ const isAutoplayStatus = () => (autoplayStatus === "true" ? true : false);
 
 const handleAutoplayStatusChange = () => button.click();
 
-
-
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.message === RequestMessages.UPDATED) {
-    console.log(autoplayStatus,"autoplay status")
+  if (
+    request.message === RequestMessages.UPDATED &&
+    (currentURL == "" || !request.url.startsWith(currentURL))
+  ) {
+    currentURL = request.url;
     sendResponse(Responses.UPDATED);
     if (isAutoplayActive) cleanup();
   }
 
   if (request.message === RequestMessages.CONTENT_STATUS) {
     isAutoplayActive = request.isAutoplayActive;
-   
+
     resetButton();
     sendResponse(Responses.REDIRECTED);
     window.location.reload();

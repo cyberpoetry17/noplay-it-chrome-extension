@@ -5,6 +5,8 @@ const Messages = {
   REDIRECTED: "redirected",
 };
 
+let isAutoplayActive = null;
+
 const urlPattern =
   /((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=))/;
 
@@ -13,6 +15,7 @@ const shortUrlPattern =
 
 chrome.runtime.onInstalled.addListener(() => {
   setIsAutoplayActive(true);
+  isAutoplayActive = true;
   reloadExsitingTabs();
 });
 
@@ -28,64 +31,59 @@ const reloadExsitingTabs = () => {
   );
 };
 
-const setIsAutoplayActive = (status) => {
-  chrome.storage.local.set({ isAutoplayActive: status });
+const getIsAutoplayActive = () => {
+  chrome.storage.local
+    .get(["isAutoplayActive"])
+    .then((result) => (isAutoplayActive = result.isAutoplayActive));
+  console.log(isAutoplayActive, "isAutoplayActive");
+
+  return isAutoplayActive;
 };
 
-// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-//   if (request.msg === Messages.SET_IS_AUTOPLAY_ACTIVE) {
-//     sendMessageToTabs(Messages.CONTENT_STATUS, request.data);
-//     setIsAutoplayActive(request.data);
-//     sendResponse(request.data);
-//   }
-// });
+const setIsAutoplayActive = (status) =>
+  chrome.storage.local.set({ isAutoplayActive: status });
 
-// const sendMessageToTabs = (message, status) => {
-//   chrome.tabs.query({}, (tabs) =>
-//     tabs.forEach((tab) => {
-//       if (isUrlValid(tab.url, urlPattern))
-//         chrome.tabs.sendMessage(tab.id, {
-//           message: message,
-//           isAutoplayActive: status,
-//         });
-//     })
-//   );
-// };
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.msg === Messages.SET_IS_AUTOPLAY_ACTIVE) {
+    setIsAutoplayActive(request.data);
+    isAutoplayActive = request.data;
+    if (isAutoplayActive) reloadExsitingTabs();
+    sendResponse(request.data);
+  }
+});
 
 const isUrlValid = (url, urlPattern) => {
-	matches = url.match(urlPattern);
-	if(matches !== null && matches.length > 0)
-		return true;
-	
-	return false;
+  matches = url.match(urlPattern);
+  if (matches !== null && matches.length > 0) return true;
+
+  return false;
 };
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if(!changeInfo.status)
-  {
-    return;
-  }
-  let url = ""
-  if(changeInfo.status.toLowerCase() == "complete") 
-  {
-    if(!changeInfo.url)
-    {
+  if (!changeInfo.status) return;
+
+  let url = "";
+  if (changeInfo.status.toLowerCase() == "complete") {
+    if (!changeInfo.url) {
       url = tab.url;
-    }
-    else
-    {
+    } else {
       url = changeInfo.url;
     }
 
-    if(!url)
-    {
+    if (!url) {
       return;
     }
   }
-  if (changeInfo.status.toLowerCase() == "complete" && isUrlValid(url, urlPattern)) {
-	  console.log("ASD: ", url);
-    chrome.scripting.executeScript(
-       {target: {tabId: tabId},
-        files: ['content.js'],})
-  }
+  if (!getIsAutoplayActive()) return;
+  if (
+    changeInfo.status.toLowerCase() == "complete" &&
+    isUrlValid(url, urlPattern)
+  )
+    injectScriptToTabs(tabId);
 });
+
+const injectScriptToTabs = (tabId) =>
+  chrome.scripting.executeScript({
+    target: { tabId: tabId },
+    files: ["content.js"],
+  });

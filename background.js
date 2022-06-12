@@ -5,7 +5,7 @@ const Messages = {
   REDIRECTED: "redirected",
 };
 
-let isAutoplayActive = undefined;
+let isAutoplayActive
 
 const urlPattern =
   /((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=))/;
@@ -34,6 +34,16 @@ const reloadExsitingTabs = () => {
 const setIsAutoplayActive = (status) =>
   chrome.storage.local.set({ isAutoplayActive: status });
 
+
+const getIsAutoplayActive = () => {
+  chrome.storage.local.get("isAutoplayActive", (result) => {
+    isAutoplayActive = result.isAutoplayActive;
+    console.log(isAutoplayActive)
+})
+console.log(isAutoplayActive,"polje")
+return isAutoplayActive;
+}
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.msg === Messages.SET_IS_AUTOPLAY_ACTIVE) {
     setIsAutoplayActive(request.data);
@@ -52,7 +62,7 @@ const isUrlValid = (url, urlPattern) => {
 };
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  console.log(isAutoplayActive,"is autoplay active??")
+  console.log(getIsAutoplayActive())
   if (!changeInfo.status) return;
 
   let url = "";
@@ -67,8 +77,8 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
       return;
     }
   }
-  if (!isAutoplayActive) {
-    console.log(isAutoplayActive,"isAUtoplayActive u tabs")
+  if (!getIsAutoplayActive()) {
+    console.log(getIsAutoplayActive(),"isAUtoplayActive u tabs")
     return};
   if (
     changeInfo.status.toLowerCase() == "complete" &&

@@ -12,7 +12,6 @@ const shortUrlPattern =
   /((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))/;
 
 chrome.runtime.onInstalled.addListener(() => {
-  setAutoplayStorage(false);
   setIsAutoplayActive(true);
   reloadExsitingTabs();
 });
@@ -29,46 +28,64 @@ const reloadExsitingTabs = () => {
   );
 };
 
-const setAutoplayStorage = (status) => {
-  chrome.storage.local.set({ autoplayButtonStatus: status });
-};
-
 const setIsAutoplayActive = (status) => {
   chrome.storage.local.set({ isAutoplayActive: status });
 };
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.msg === Messages.SET_IS_AUTOPLAY_ACTIVE) {
-    sendMessageToTabs(Messages.CONTENT_STATUS, request.data);
-    setIsAutoplayActive(request.data);
-    sendResponse(request.data);
-  }
-});
+// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+//   if (request.msg === Messages.SET_IS_AUTOPLAY_ACTIVE) {
+//     sendMessageToTabs(Messages.CONTENT_STATUS, request.data);
+//     setIsAutoplayActive(request.data);
+//     sendResponse(request.data);
+//   }
+// });
 
-const sendMessageToTabs = (message, status) => {
-  chrome.tabs.query({}, (tabs) =>
-    tabs.forEach((tab) => {
-      if (isUrlValid(tab.url, urlPattern))
-        chrome.tabs.sendMessage(tab.id, {
-          message: message,
-          isAutoplayActive: status,
-        });
-    })
-  );
+// const sendMessageToTabs = (message, status) => {
+//   chrome.tabs.query({}, (tabs) =>
+//     tabs.forEach((tab) => {
+//       if (isUrlValid(tab.url, urlPattern))
+//         chrome.tabs.sendMessage(tab.id, {
+//           message: message,
+//           isAutoplayActive: status,
+//         });
+//     })
+//   );
+// };
+
+const isUrlValid = (url, urlPattern) => {
+	matches = url.match(urlPattern);
+	if(matches !== null && matches.length > 0)
+		return true;
+	
+	return false;
 };
 
-const isUrlValid = (url, urlPattern) => url.match(urlPattern);
-
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.url && (isUrlValid(changeInfo.url, urlPattern) || isUrlValid(changeInfo.url, shortUrlPattern))) {
-    chrome.tabs.sendMessage(tabId, {
-      message: Messages.UPDATED,
-      url: changeInfo.url,
-    }, (result) => handleError(result))}
-});
+  if(!changeInfo.status)
+  {
+    return;
+  }
+  let url = ""
+  if(changeInfo.status.toLowerCase() == "complete") 
+  {
+    if(!changeInfo.url)
+    {
+      url = tab.url;
+    }
+    else
+    {
+      url = changeInfo.url;
+    }
 
-const handleError = (result) =>{
-  if (chrome.runtime.lastError) {
-    console.log(result)
-  } 
-}
+    if(!url)
+    {
+      return;
+    }
+  }
+  if (changeInfo.status.toLowerCase() == "complete" && isUrlValid(url, urlPattern)) {
+	  console.log("ASD: ", url);
+    chrome.scripting.executeScript(
+       {target: {tabId: tabId},
+        files: ['content.js'],})
+  }
+});

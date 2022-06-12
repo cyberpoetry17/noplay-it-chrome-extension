@@ -20,15 +20,17 @@
       ) {
 
         button = mutations[i].target;
-
         observer.disconnect();
+       
 
         autoplayStatus = button
           .querySelector("[" + QueryHelpers.ARIA_CHECKED + "]")
           .getAttribute("aria-checked");
 
-        if (autoplayStatus === "true") setTimeout(() => button.click(), 1500);
-  
+        if (autoplayStatus == "true") {
+          console.log("clickkk")
+          setTimeout(() => button.click(), 2000)};
+        
         return;
       }
     }

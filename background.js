@@ -5,7 +5,7 @@ const Messages = {
   REDIRECTED: "redirected",
 };
 
-let isAutoplayActive = true;
+let isAutoplayActive = undefined;
 
 const urlPattern =
   /((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=))/;
@@ -15,6 +15,7 @@ const shortUrlPattern =
 
 chrome.runtime.onInstalled.addListener(() => {
   setIsAutoplayActive(true);
+  isAutoplayActive = true;
   reloadExsitingTabs();
 });
 
@@ -36,8 +37,9 @@ const setIsAutoplayActive = (status) =>
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.msg === Messages.SET_IS_AUTOPLAY_ACTIVE) {
     setIsAutoplayActive(request.data);
+    console.log(request.data)
     isAutoplayActive = request.data;
-    if (isAutoplayActive) reloadExsitingTabs();
+    reloadExsitingTabs();
     sendResponse(request.data);
   }
 });
@@ -71,12 +73,11 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (
     changeInfo.status.toLowerCase() == "complete" &&
     isUrlValid(url, urlPattern)
-  )
-    injectScriptToTabs(tabId);
+  ){
+    console.log("u skripti sam")
+    chrome.scripting.executeScript({
+      target: { tabId: tabId },
+      files: ["content.js"],
+    })}
 });
 
-const injectScriptToTabs = (tabId) =>
-  chrome.scripting.executeScript({
-    target: { tabId: tabId },
-    files: ["content.js"],
-  });

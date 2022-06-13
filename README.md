@@ -9,3 +9,26 @@ Noplayit Chrome Extension :
 - Clicking on the button in the popup window will activate/deactivate the addon. When the addon is turned on, its functionality is active, and "Autoplay" on all videos will be turned off (on video start). If the addon is deactivated, it will not affect the functionality of YouTube "Autoplay". When activating/deactivating the addon, all YouTube pages will automatically reload to apply changes.
 ![image](https://user-images.githubusercontent.com/44535341/168479998-d968b2e1-ae28-4536-93df-821cc4403ee2.png)
 
+
+
+
+
+Attention:
+Certain Chrome versions do not support all ES6+/ECMAScript features:
+ 
+ Mutation Observer:
+- Chrome version 4 to 17 does not support Mutation Observer. 
+- Chrome 18 to 26 partially supports Mutation Observer. 
+- Chrome from 27 to the latest version supports Mutation Observer.
+
+ Arrow functions:
+- Chrome versions bellow 45 do not support arrow functions.
+- Chrome versions 45+ support arrow functions.
+
+
+ let:
+- Version from 41 to 48 partially supports let.
+- Version 48+ supports let.
+
+ const:
+- Version 49+ fully supports const.

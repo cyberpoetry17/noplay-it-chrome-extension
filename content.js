@@ -27,9 +27,7 @@
           .querySelector("[" + QueryHelpers.ARIA_CHECKED + "]")
           .getAttribute("aria-checked");
 
-        if (autoplayStatus == "true") {
-          console.log("clickkk")
-          setTimeout(() => button.click(), 2000)};
+        if (autoplayStatus == "true") setTimeout(() => button.click(), 2000);
         
         return;
       }

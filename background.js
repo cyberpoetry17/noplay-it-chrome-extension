@@ -6,6 +6,15 @@ const Messages = {
 };
 
 let isAutoplayActive;
+chrome.storage.local.get('isAutoplayActive', (result) => {
+  if (typeof result.isAutoplayActive === 'undefined') {
+     if(result.isAutoplayActive)
+       setIsAutoplayActive(true);
+  } else {
+     setIsAutoplayActive(false);
+  }
+});
+
 
 const urlPattern =
   /((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=))/;

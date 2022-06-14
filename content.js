@@ -14,7 +14,7 @@
   const hasTitle = (target) => target.includes(QueryHelpers.TITLE_QUERY);
 
   const endInterval = (intervalID) => {
-    window.clearInterval(intervalID);
+    clearInterval(intervalID);
     console.log("interval ended");
   };
 

@@ -64,7 +64,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (!changeInfo.status) return;
 
   let url = "";
-  if (changeInfo.status.toLowerCase() === "complete") {
+  if (changeInfo.status.toLowerCase() == "complete") {
     if (!changeInfo.url) url = tab.url;
     else url = changeInfo.url;
 
@@ -72,7 +72,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   }
   if (!isAutoplayActive) return;
   if (
-    changeInfo.status.toLowerCase() === "complete" &&
+    changeInfo.status.toLowerCase() == "complete" &&
     isUrlValid(url, urlPattern)
   ) {
 

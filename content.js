@@ -2,7 +2,8 @@
   let button = undefined;
 
   const QueryHelpers = {
-    NODE_NAME: "button",
+    NODE_NAME_BUTTON: "button",
+    NODE_NAME_DIV: "div",
     ARIA_CHECKED: "aria-checked",
     TITLE_QUERY: "autoplay",
   };
@@ -18,24 +19,26 @@
         isNodeNameEqual(mutations[i].target.nodeName) &&
         hasTitle(mutations[i].target.title.toLowerCase())
       ) {
-
         button = mutations[i].target;
-        observer.disconnect();
-       
+
+        if (mutations[i].target.nodeName !== QueryHelpers.NODE_NAME_DIV) return;
 
         autoplayStatus = button
           .querySelector("[" + QueryHelpers.ARIA_CHECKED + "]")
           .getAttribute("aria-checked");
 
         if (autoplayStatus === "true") setTimeout(handleButtonClick, 2000);
-        
+
+        observer.disconnect();
         return;
       }
     }
   });
 
-  const handleButtonClick = () =>  {button.click()
-  console.log("button click")}
+  const handleButtonClick = () => {
+    button.click();
+    console.log("button click");
+  };
 
   const setObserver = (element, observer) => {
     observer.observe(element, {

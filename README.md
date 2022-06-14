@@ -19,7 +19,13 @@ https://user-images.githubusercontent.com/44535341/173588328-ca0b9d6f-2847-491f-
 ![addon](https://user-images.githubusercontent.com/44535341/173579606-6b17e9be-e04c-44a9-9f55-9114ea55fc03.PNG)
 
 
-Attention:
+
+
+
+***Attention***:
+
+Tested with ad blocker but not with other extensions.
+
 Certain Chrome versions do not support all ES6+/ECMAScript features:
 
  Mutation Observer:

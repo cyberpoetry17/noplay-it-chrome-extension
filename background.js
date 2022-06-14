@@ -24,7 +24,6 @@ const shortUrlPattern =
 
 chrome.runtime.onInstalled.addListener(() => {
   setIsAutoplayActive(true);
-
   reloadExsitingTabs();
 });
 
@@ -62,8 +61,8 @@ const isUrlValid = (url, urlPattern) => {
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (!changeInfo.status) return;
-
   let url = "";
+
   if (changeInfo.status.toLowerCase() == "complete") {
     if (!changeInfo.url) url = tab.url;
     else url = changeInfo.url;
@@ -71,6 +70,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (!url) return;
   }
   if (!isAutoplayActive) return;
+  
   if (
     changeInfo.status.toLowerCase() == "complete" &&
     isUrlValid(url, urlPattern)

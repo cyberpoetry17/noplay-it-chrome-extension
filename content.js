@@ -44,10 +44,7 @@
       console.log("button click");
     }
   };
-
-  const getAutoplayStatus = () =>
   
-
   const setObserver = (element, observer) => {
     observer.observe(element, {
       childList: true,

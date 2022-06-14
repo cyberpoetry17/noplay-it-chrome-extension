@@ -27,16 +27,18 @@
         button = mutations[i].target;
         observer.disconnect();
 
-        let interval = setInterval(handleButtonClick, 2000);
-        if (getAutoplayStatus() == "false") endInterval(interval);
+        window.myInterval = setInterval(handleButtonClick, 2000);
         return;
       }
     }
   });
 
   const handleButtonClick = () => {
-    if(getAutoplayStatus()!="true") return;
-    button.click();
+    if (getAutoplayStatus() == "true") {
+      button.click();
+      clearInterval(window.myInterval)
+      console.log("button click");
+    }
   };
 
   const getAutoplayStatus = () =>

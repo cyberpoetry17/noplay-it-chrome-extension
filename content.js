@@ -27,12 +27,15 @@
           .querySelector("[" + QueryHelpers.ARIA_CHECKED + "]")
           .getAttribute("aria-checked");
 
-        if (autoplayStatus == "true") setTimeout(() => button.click(), 2000);
+        if (autoplayStatus === "true") setTimeout(handleButtonClick, 2000);
         
         return;
       }
     }
   });
+
+  const handleButtonClick = () =>  {button.click()
+  console.log("button click")}
 
   const setObserver = (element, observer) => {
     observer.observe(element, {

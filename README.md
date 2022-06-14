@@ -1,5 +1,15 @@
 Noplayit Chrome Extension :
 
+Preview: version used : 102.0.5005.115 (Official Build) (64-bit)
+
+
+
+https://user-images.githubusercontent.com/44535341/173587981-07c6d591-e52e-425b-a287-538acea59e0c.mp4
+
+
+
+
+
 - This addons purpose is to automatically turn off autoplay as soon as the video starts.
 - When addon is active, clicking on the "Autoplay" button in the YouTube player will turn on autoplay. This will play the next video but won't turn on autoplay globally (It will be turned off when the next video starts). ![image](https://user-images.githubusercontent.com/44535341/168480017-73f14c7d-28bb-44c1-b7da-bf27baf0a4c6.png)
 

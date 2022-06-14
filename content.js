@@ -2,7 +2,7 @@
   let button = undefined;
 
   const QueryHelpers = {
-    NODE_NAME_BUTTON: "button",
+    NODE_NAME: "button",
     NODE_NAME_DIV: "div",
     ARIA_CHECKED: "aria-checked",
     TITLE_QUERY: "autoplay",
@@ -13,13 +13,10 @@
 
   const hasTitle = (target) => target.includes(QueryHelpers.TITLE_QUERY);
 
-
-  
-
-  const endInterval = (intervalID) =>{
-    clearInterval(intervalID)
-    console.log("interval ended")
-  }
+  const endInterval = (intervalID) => {
+    clearInterval(intervalID);
+    console.log("interval ended");
+  };
 
   const documentObserver = new MutationObserver((mutations, observer) => {
     for (let i = 0; i < mutations.length; i++) {
@@ -28,30 +25,26 @@
         hasTitle(mutations[i].target.title.toLowerCase())
       ) {
         button = mutations[i].target;
-       
         observer.disconnect();
-   
-       
-        autoplayStatus = button
-        .querySelector("[" + QueryHelpers.ARIA_CHECKED + "]")
-        .getAttribute("aria-checked");
 
-        let interval = setInterval(handleButtonClick(interval), 2000)
-     
-      
+        let interval = setInterval(handleButtonClick, 2000);
+        if (getAutoplayStatus() == "false") endInterval(interval);
         return;
       }
     }
   });
 
-
-  const handleButtonClick = (interval) => {
-    if(autoplayStatus == "true"){
-       button.click();
-       endInterval(interval);}
-    console.log("button click");
- 
+  const handleButtonClick = () => {
+    if (getAutoplayStatus() == "true") {
+      button.click();
+      console.log("button click");
+    }
   };
+
+  const getAutoplayStatus = () =>
+    button
+      .querySelector("[" + QueryHelpers.ARIA_CHECKED + "]")
+      .getAttribute("aria-checked");
 
   const setObserver = (element, observer) => {
     observer.observe(element, {

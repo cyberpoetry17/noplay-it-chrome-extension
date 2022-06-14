@@ -27,14 +27,18 @@
         button = mutations[i].target;
         observer.disconnect();
 
-        window.myInterval = setInterval(handleButtonClick, 2000);
+       let autoplayStatus = button
+      .querySelector("[" + QueryHelpers.ARIA_CHECKED + "]")
+      .getAttribute("aria-checked");
+
+        window.myInterval = setInterval(handleButtonClick(autoplayStatus), 2000);
         return;
       }
     }
   });
 
-  const handleButtonClick = () => {
-    if (getAutoplayStatus() == "true") {
+  const handleButtonClick = (autoplayStatus) => {
+    if (autoplayStatus == "true") {
       button.click();
       endInterval(window.myInterval)
       console.log("button click");
@@ -42,9 +46,7 @@
   };
 
   const getAutoplayStatus = () =>
-    button
-      .querySelector("[" + QueryHelpers.ARIA_CHECKED + "]")
-      .getAttribute("aria-checked");
+  
 
   const setObserver = (element, observer) => {
     observer.observe(element, {

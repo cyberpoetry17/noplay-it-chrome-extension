@@ -13,6 +13,14 @@
 
   const hasTitle = (target) => target.includes(QueryHelpers.TITLE_QUERY);
 
+
+  
+
+  const endInterval = (intervalID) =>{
+    clearInterval(intervalID)
+    console.log("interval ended")
+  }
+
   const documentObserver = new MutationObserver((mutations, observer) => {
     for (let i = 0; i < mutations.length; i++) {
       if (
@@ -20,24 +28,29 @@
         hasTitle(mutations[i].target.title.toLowerCase())
       ) {
         button = mutations[i].target;
-
-        if (mutations[i].target.nodeName !== QueryHelpers.NODE_NAME_DIV) return;
-
-        autoplayStatus = button
-          .querySelector("[" + QueryHelpers.ARIA_CHECKED + "]")
-          .getAttribute("aria-checked");
-
-        if (autoplayStatus === "true") setTimeout(handleButtonClick, 2000);
-
+       
         observer.disconnect();
+   
+       
+        autoplayStatus = button
+        .querySelector("[" + QueryHelpers.ARIA_CHECKED + "]")
+        .getAttribute("aria-checked");
+
+        let interval = setInterval(handleButtonClick(interval), 2000)
+     
+      
         return;
       }
     }
   });
 
-  const handleButtonClick = () => {
-    button.click();
+
+  const handleButtonClick = (interval) => {
+    if(autoplayStatus == "true"){
+       button.click();
+       endInterval(interval);}
     console.log("button click");
+ 
   };
 
   const setObserver = (element, observer) => {

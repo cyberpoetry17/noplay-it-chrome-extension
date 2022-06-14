@@ -14,7 +14,7 @@
   const hasTitle = (target) => target.includes(QueryHelpers.TITLE_QUERY);
 
   const endInterval = (intervalID) => {
-    clearInterval(intervalID);
+    window.clearInterval(intervalID);
     console.log("interval ended");
   };
 
@@ -36,7 +36,7 @@
   const handleButtonClick = () => {
     if (getAutoplayStatus() == "true") {
       button.click();
-      clearInterval(window.myInterval)
+      endInterval(window.myInterval)
       console.log("button click");
     }
   };

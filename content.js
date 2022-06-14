@@ -35,10 +35,8 @@
   });
 
   const handleButtonClick = () => {
-    if (getAutoplayStatus() == "true") {
-      button.click();
-      console.log("button click");
-    }
+    if(getAutoplayStatus()!="true") return;
+    button.click();
   };
 
   const getAutoplayStatus = () =>

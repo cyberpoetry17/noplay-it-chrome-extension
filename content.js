@@ -12,7 +12,7 @@
 
   const hasTitle = (target) => target.includes(QueryHelpers.TITLE_QUERY);
 
-  const defineMutations = (mutations,observer) => {
+  const findAndTurnOffAutoplayButton = (mutations,observer) => {
     for (let i = 0; i < mutations.length; i++) {
       if (
         isNodeNameEqual(mutations[i].target.nodeName) &&
@@ -34,7 +34,7 @@
     }
   }
 
-  const documentObserver = new MutationObserver(defineMutations(mutations,observer))
+  const documentObserver = new MutationObserver(findAndTurnOffAutoplayButton)
 
   const setObserver = (element, observer) => {
     observer.observe(element, {

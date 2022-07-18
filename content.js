@@ -12,9 +12,6 @@
 
   const hasTitle = (target) => target.includes(QueryHelpers.TITLE_QUERY);
 
-  const documentObserver = new MutationObserver(defineMutations(mutations,observer))
-
-
   const defineMutations = (mutations,observer) => {
     for (let i = 0; i < mutations.length; i++) {
       if (
@@ -36,6 +33,9 @@
       }
     }
   }
+
+  const documentObserver = new MutationObserver(defineMutations(mutations,observer))
+
   const setObserver = (element, observer) => {
     observer.observe(element, {
       childList: true,

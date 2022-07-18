@@ -63,12 +63,13 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (!changeInfo.status) return;
   let url = "";
 
-  if (changeInfo.status.toLowerCase() !== "complete") return;
+  if (changeInfo.status.toLowerCase() == "complete"){
   if (!changeInfo.url) url = tab.url;
   else url = changeInfo.url;
 
   if (!url) return;
-
+  }
+  
   if (!isAutoplayActive) return;
   
   if (

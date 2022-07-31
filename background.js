@@ -7,9 +7,12 @@ const Messages = {
 
 let isAutoplayActive;
 chrome.storage.local.get('isAutoplayActive', (result) => {
-  if (typeof result.isAutoplayActive === 'undefined' || result.isAutoplayActive)
+  if (typeof result.isAutoplayActive === 'undefined') {
     setIsAutoplayActive(true);
-  if(!result.isAutoplayActive) setIsAutoplayActive(false);
+  } else {
+    if(!result.isAutoplayActive) setIsAutoplayActive(false);
+    if(result.isAutoplayActive) setIsAutoplayActive(true);
+  }
 });
 
 

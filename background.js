@@ -7,12 +7,9 @@ const Messages = {
 
 let isAutoplayActive;
 chrome.storage.local.get('isAutoplayActive', (result) => {
-  if (typeof result.isAutoplayActive === 'undefined') {
-    setIsAutoplayActive(true);
-  } else {
-    if(!result.isAutoplayActive) setIsAutoplayActive(false);
-    if(result.isAutoplayActive) setIsAutoplayActive(true);
-  }
+  if (typeof result.isAutoplayActive === 'undefined')  setIsAutoplayActive(true);
+  if(!result.isAutoplayActive) setIsAutoplayActive(false);
+  if(result.isAutoplayActive) setIsAutoplayActive(true);
 });
 
 
@@ -61,17 +58,15 @@ const isUrlValid = (url, urlPattern) => {
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (!changeInfo.status) return;
-  let url = "";
+  if (!isAutoplayActive) return;
+  if (changeInfo.status.toLowerCase() != "complete") return
 
-  if (changeInfo.status.toLowerCase() == "complete"){
+  let url = "";
   if (!changeInfo.url) url = tab.url;
   else url = changeInfo.url;
 
   if (!url) return;
-  }
-  
-  if (!isAutoplayActive) return;
-  
+    
   if (
     changeInfo.status.toLowerCase() == "complete" &&
     isUrlValid(url, urlPattern)

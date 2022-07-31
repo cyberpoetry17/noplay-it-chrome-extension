@@ -8,6 +8,10 @@ const NodeId = {
   GITHUB_BUTTON: "github-button",
 };
 
+const Messages = {
+  SET_IS_AUTOPLAY_ACTIVE: "set-is-autoplay-active",
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   autoplayCheckbox = document.getElementById(NodeId.AUTOPLAY_CHECKBOX);
   githubButton = document.getElementById(NodeId.GITHUB_BUTTON);
@@ -26,7 +30,7 @@ const getIsAutoplayActiveStatus = () => {
 
 const addAutoplayCheckboxListener = () => {
   autoplayCheckbox.addEventListener("click", () => {
-    sendMessage(!isAutoplayActive, "set-is-autoplay-active");
+    sendMessage(!isAutoplayActive, Messages.SET_IS_AUTOPLAY_ACTIVE);
   });
 };
 

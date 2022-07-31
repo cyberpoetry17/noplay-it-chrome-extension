@@ -1,8 +1,5 @@
 const Messages = {
-  UPDATED: "updated",
-  CONTENT_STATUS: "content-status",
   SET_IS_AUTOPLAY_ACTIVE: "set-is-autoplay-active",
-  REDIRECTED: "redirected",
 };
 
 let isAutoplayActive;

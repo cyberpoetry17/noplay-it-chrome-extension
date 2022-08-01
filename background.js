@@ -21,10 +21,10 @@ const shortUrlPattern =
 
 chrome.runtime.onInstalled.addListener(() => {
   setIsAutoplayActive(true);
-  reloadExsitingTabs();
+  reloadExistingTabs();
 });
 
-const reloadExsitingTabs = () => {
+const reloadExistingTabs = () => {
   chrome.tabs.query({}, (tabs) =>
     tabs.forEach((tab) => {
       if (
@@ -44,7 +44,7 @@ const setIsAutoplayActive = (status) =>
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.msg === Messages.SET_IS_AUTOPLAY_ACTIVE) {
     setIsAutoplayActive(request.data);
-    reloadExsitingTabs();
+    reloadExistingTabs();
     sendResponse(request.data);
   }
 });
